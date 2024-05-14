@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 public class AlertSystem : MonoBehaviour
@@ -14,6 +15,7 @@ public class AlertSystem : MonoBehaviour
 
     public Transform aestreiod;
 
+    private Color color = new Color(0, 1, 0, 0.3f);
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -34,16 +36,6 @@ public class AlertSystem : MonoBehaviour
         if (dir.magnitude <= radius)
         {
             float dot = Vector2.Dot(dir.normalized, transform.up);
-            // float theta = Mathf.Acos(dot);
-            // float degree = Mathf.Rad2Deg * theta;
-            //
-            // // 시야각 판별
-            // if (degree <= fov / 2f)
-            //     animator.SetBool(blinking, true);
-            // else
-            // {
-            //     animator.SetBool(blinking, false);
-            // }
             if (dot >= alertThreshold)
             {
                 animator.SetBool(blinking, true);
@@ -53,8 +45,21 @@ public class AlertSystem : MonoBehaviour
                 animator.SetBool(blinking, false);
             }
         }
-
-
+        else
+        {
+            animator.SetBool(blinking, false);
+        }
     }
-    
+
+    private void OnDrawGizmos()
+    {
+        Handles.color = color;
+
+        // 시야의 시작 방향 벡터 계산
+        Vector2 startDirection = Quaternion.Euler(0, 0, fov / 2) * transform.up;
+
+        // DrawSolidArc 함수를 이용하여 시야 범위를 나타내는 부채꼴 그리기
+        Handles.DrawSolidArc(transform.position, Vector3.back, startDirection, fov, radius);
+    }
+
 }

@@ -30,15 +30,18 @@ public class AlertSystem : MonoBehaviour
 
     private void CheckAlert()
     {
-        // 주변 반경의 소행성들을 확인하고 이를 감지하여 Alert를 발생시킴(isBlinking -> true)
-        Vector2 dir = aestreiod.position - transform.position;
+        // 물체의 방향을 구한다.
+        Vector2 targetDir = aestreiod.position - transform.position;
 
-        if (dir.magnitude <= radius)
+        if (targetDir.magnitude <= radius) // 오브젝트가 플레이어의 탐지 범위에 들어올 때 
         {
-            float dot = Vector2.Dot(dir.normalized, transform.up);
-            if (dot >= alertThreshold)
+            // 내적
+            float dot = Vector2.Dot(transform.up, targetDir.normalized);
+            
+            // 내적한 값이 각도 / 2 코사인 값보다 크다면 => 플레이어가 바라보는 방향에 더 가깝다면
+            if (dot >= alertThreshold) 
             {
-                animator.SetBool(blinking, true);
+                animator.SetBool(blinking, true); // 탐지
             }
             else
             {
